@@ -14,13 +14,13 @@ class Lyrics extends Component {
                 .then(res => {
                     
                     //use this in case of bug!!
-                    //console.log(res.data.message.body.lyrics.lyrics_body)
+                    // console.log(res.data.message.body)
                     
                     this.setState({ lyrics: res.data.message.body.lyrics})
 
                     return axios.get(`https://cors-anywhere.herokuapp.com/https://api.musixmatch.com/ws/1.1/track.get?track_id=${this.props.match.params.id}&apikey=${process.env.REACT_APP_MM_KEY}`) //This API call handles the Songs Meta Data, like trakc name and stuff
                 }).then(res => {
-                    // console.log(res.data)
+                    // console.log(res.data.message.body.track)
                     this.setState({ track: res.data.message.body.track})
                     
                  })
@@ -31,9 +31,9 @@ class Lyrics extends Component {
         const { track, lyrics } = this.state
 
         if(track === undefined || 
-        lyrics === undefined 
-        // Object.keys(track).length === 0 ||
-        // Object.keys(lyrics).length === 0
+        lyrics === undefined ||
+        Object.keys(track).length === 0 ||
+        Object.keys(lyrics).length === 0
         ) {
             return <Spinner/>
         }
@@ -50,6 +50,23 @@ class Lyrics extends Component {
                             <p className="card-text">{ lyrics.lyrics_body }</p>
                         </div>
                     </div>
+                    {/* This is the song meta information */}
+                    <ul className="list-group mt-3">
+                        <li className="list-group-item">
+                            <strong>Album ID</strong>: {track.album_id}
+                        </li>
+                        {/* <li className="list-group-item">
+                            <strong>Song Genre</strong>:{' '}
+                            {track.primary_genres.music_genre_list[0].music_genre.music_genre_name}
+                                  
+                        </li> */}
+                        <li className="list-group-item">
+                            <strong>Explicit Words</strong>: {track.explicit === 0 ? 'No' : 'Yes'}
+                        </li>
+                        {/* <li className="list-group-item">
+                            <strong>Release Date</strong>: {track.first_release_date}
+                        </li> */}
+                    </ul>
                 </React.Fragment>
             )
         }
